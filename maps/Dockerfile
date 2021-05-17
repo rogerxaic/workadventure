@@ -1,5 +1,7 @@
 FROM thecodingmachine/nodejs:12-apache
 
+USER root
+
 COPY . .
 
 RUN yarn install
