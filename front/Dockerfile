@@ -11,9 +11,9 @@ WORKDIR /usr/src
 COPY . .
 COPY --from=messages /usr/src/generated ./src/Messages/generated
 
-RUN yarn install 
-RUN ./templater.sh
-RUN yarn run build
+RUN npm install 
+# RUN ./templater.sh
+RUN npm run build
 
 # STAGE 2
 FROM nginx:1.20.0
