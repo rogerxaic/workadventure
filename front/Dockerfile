@@ -12,7 +12,7 @@ COPY . .
 COPY --from=messages /usr/src/generated ./src/Messages/generated
 
 RUN npm install 
-# RUN ./templater.sh
+RUN ./templater.sh
 RUN npm run build
 
 # STAGE 2
