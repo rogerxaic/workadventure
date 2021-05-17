@@ -1,13 +1,14 @@
 # protobuf build
-FROM image-registry.openshift-image-registry.svc:5000/roger-sandbox/messages as builder
+ARG MESSAGES_IMAGE
+FROM ${MESSAGES_IMAGE} as messages
 
 # typescript build
-FROM node:14.15.4-buster-slim as builder2
+FROM node:14.15.4-buster-slim as builder
 WORKDIR /usr/src
 COPY yarn.lock package.json ./
 RUN yarn install
 COPY . .
-COPY --from=builder /usr/src/generated src/Messages/generated
+COPY --from=messages /usr/src/generated src/Messages/generated
 ENV NODE_ENV=production
 RUN yarn run tsc
 
@@ -15,7 +16,7 @@ RUN yarn run tsc
 FROM node:14.15.4-buster-slim
 WORKDIR /usr/src
 COPY yarn.lock package.json ./
-COPY --from=builder2 /usr/src/dist /usr/src/dist
+COPY --from=builder /usr/src/dist /usr/src/dist
 ENV NODE_ENV=production
 RUN yarn install --production
 
