@@ -1,20 +1,18 @@
-FROM thecodingmachine/nodejs:12-apache
+FROM node:12 as BUILDER
 
 ENV NODE_ENV=production
-ENV APACHE_DOCUMENT_ROOT=dist/
-
-USER root
 
 COPY . .
 
-RUN yarn install
+RUN yarn install \
+  && yarn run prod
 
+FROM nginx
 
-RUN sudo a2enmod headers
-
-RUN yarn run prod
+COPY --from=BUILDER dist .
+COPY . .
 
 RUN chgrp -R 0 . \
  && chmod -R g=u .
 
-USER 1001
+ENTRYPOINT [ "/usr/bin/nginx", "-g", "daemon: off;" ]
