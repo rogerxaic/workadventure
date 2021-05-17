@@ -17,8 +17,8 @@ COPY --from=BUILDER dist .
 COPY . .
 
 RUN touch /run/nginx.pid \
-  && chgrp -R 0 /var/cache/nginx /var/log/nginx /run/nginx.pid \
-  && chmod -R g+rwx /var/cache/nginx /var/log/nginx /run/nginx.pid
+  && chgrp -R 0 /var/cache/nginx /var/log/nginx /run/nginx.pid /usr/share/nginx/html \
+  && chmod -R g+rwx /var/cache/nginx /var/log/nginx /run/nginx.pid /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
