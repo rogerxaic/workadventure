@@ -5,8 +5,8 @@ ENV NODE_ENV=production
 
 COPY . .
 
-RUN yarn install \
-  && yarn run prod
+RUN npm install \
+  && npm run prod
 
 # STAGE 2
 FROM nginx:1.20.0
