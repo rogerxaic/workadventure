@@ -11,8 +11,10 @@ RUN yarn install \
 # STAGE 2
 FROM nginx:1.20.0
 
-COPY --from=BUILDER dist /usr/share/nginx/html
-COPY . /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+
+COPY --from=BUILDER dist .
+COPY . .
 
 RUN touch /run/nginx.pid \
   && chgrp -R 0 /var/cache/nginx /var/log/nginx /run/nginx.pid \
