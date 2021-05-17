@@ -1,21 +1,34 @@
-FROM thecodingmachine/workadventure-back-base:latest as builder
-WORKDIR /var/www/messages
-COPY --chown=docker:docker messages .
-RUN yarn install && yarn proto
+# protobuf build
+ARG MESSAGES_IMAGE
+FROM ${MESSAGES_IMAGE} as messages
 
-# we are rebuilding on each deploy to cope with the PUSHER_URL environment URL
-FROM thecodingmachine/nodejs:14-apache
 
-COPY --chown=docker:docker front .
-COPY --from=builder --chown=docker:docker /var/www/messages/generated /var/www/html/src/Messages/generated
+# STAGE 1
+FROM node:12 as builder
 
-# Removing the iframe.html file from the final image as this adds a XSS attack.
-# iframe.html is only in dev mode to circumvent a limitation
-RUN rm dist/iframe.html
+WORKDIR /usr/src
 
-RUN yarn install
+COPY . .
+COPY --from=messages /usr/src/generated ./Messages/generated
 
-ENV NODE_ENV=production
-ENV STARTUP_COMMAND_0="./templater.sh"
-ENV STARTUP_COMMAND_1="yarn run build"
-ENV APACHE_DOCUMENT_ROOT=dist/
+RUN yarn install 
+RUN ./templater.sh
+RUN yarn run build
+
+# STAGE 2
+FROM nginx:1.20.0
+
+WORKDIR /usr/share/nginx/html
+
+COPY --from=builder /usr/src/dist .
+RUN rm iframe.html
+
+RUN touch /run/nginx.pid \
+  && chgrp -R 0 /var/cache/nginx /var/log/nginx /run/nginx.pid \
+  && chmod -R g+rwx /var/cache/nginx /var/log/nginx /run/nginx.pid
+
+RUN sed -i 's/80;/8080;/g' /etc/nginx/conf.d/default.conf
+
+EXPOSE 8080
+
+CMD [ "nginx", "-g", "daemon off;" ]
