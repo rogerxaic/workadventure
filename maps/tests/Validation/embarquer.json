@@ -58,7 +58,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"dungeon.tsx"
+         "source":"dungeon.xml"
         }],
  "tilewidth":32,
  "type":"map",
