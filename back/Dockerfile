@@ -1,5 +1,5 @@
 # protobuf build
-FROM messages as builder
+FROM image-registry.openshift-image-registry.svc:5000/roger-sandbox/messages as builder
 
 # typescript build
 FROM node:14.15.4-buster-slim as builder2
