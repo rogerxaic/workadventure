@@ -9,14 +9,14 @@ RUN yarn install \
 
 FROM nginx:1.20.0
 
-USER root
+# USER root
 
 COPY --from=BUILDER dist .
 COPY . .
 
-RUN chgrp -R 0 . \
- && chmod -R g=u .
+# RUN chgrp -R 0 . \
+#  && chmod -R g=u .
 
-USER 1001
+# USER 1001
 
 ENTRYPOINT [ "/usr/bin/nginx", "-g", "daemon: off;" ]
