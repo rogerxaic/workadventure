@@ -1,3 +1,4 @@
+# STAGE 1
 FROM node:12 as BUILDER
 
 ENV NODE_ENV=production
@@ -7,16 +8,10 @@ COPY . .
 RUN yarn install \
   && yarn run prod
 
+# STAGE 2
 FROM nginx:1.20.0
 
-# USER root
+COPY --from=BUILDER dist /usr/share/nginx/html
+COPY . /usr/share/nginx/html
 
-COPY --from=BUILDER dist .
-COPY . .
-
-# RUN chgrp -R 0 . \
-#  && chmod -R g=u .
-
-# USER 1001
-
-ENTRYPOINT [ "/usr/bin/nginx", "-g", "daemon: off;" ]
+CMD [ "nginx", "-g", "daemon off;" ]
