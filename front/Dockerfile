@@ -9,7 +9,7 @@ FROM node:12 as builder
 WORKDIR /usr/src
 
 COPY . .
-COPY --from=messages /usr/src/generated ./Messages/generated
+COPY --from=messages /usr/src/generated ./src/Messages/generated
 
 RUN yarn install 
 RUN ./templater.sh
