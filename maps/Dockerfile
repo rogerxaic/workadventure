@@ -20,7 +20,7 @@ RUN touch /run/nginx.pid \
   && chgrp -R 0 /var/cache/nginx /var/log/nginx /run/nginx.pid \
   && chmod -R g+rwx /var/cache/nginx /var/log/nginx /run/nginx.pid
 
-RUN sed -i 's/80;/8080;/g' /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 8080
 
